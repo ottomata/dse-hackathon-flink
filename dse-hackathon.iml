@@ -694,7 +694,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="scala-sdk-2.11.12" level="application" />
-    <orderEntry type="library" name="Maven: org.wikimedia:eventutilities:1.0.9-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.wikimedia:eventutilities:1.0.8" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.1" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
     <orderEntry type="library" name="Maven: com.github.java-json-tools:json-schema-core:1.2.10" level="project" />
