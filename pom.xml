@@ -147,6 +147,8 @@
                                 <arg>-dependencyfile</arg>
                                 <arg>${project.build.directory}/.scala_dependencies</arg>
                             </args>
+<!--                            https://stackoverflow.com/a/62694412 -->
+                            <addScalacArgs>-target:jvm-1.8</addScalacArgs>
                         </configuration>
                     </execution>
                 </executions>

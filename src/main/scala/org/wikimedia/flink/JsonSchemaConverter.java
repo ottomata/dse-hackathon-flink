@@ -1,13 +1,5 @@
 package org.wikimedia.flink;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.flink.table.api.DataTypes;
@@ -19,32 +11,22 @@ import java.util.regex.Pattern;
 
 import org.apache.flink.table.api.Schema;
 
-import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class JsonSchemaConverter {
     private static final Logger log = LoggerFactory.getLogger(JsonSchemaConverter.class);
 
-    private boolean shouldSanitizeFieldNames = true; //JsonSchemaConverterConfig.SANITIZE_FIELD_NAMES_DEFAULT;
+    private boolean shouldSanitizeFieldNames = false; //JsonSchemaConverterConfig.SANITIZE_FIELD_NAMES_DEFAULT;
 
     // If shouldSanitizeFieldNames anything in a field name matching this regex
     // will be replaced with sanitizeFieldReplacement.
     private static final Pattern sanitizeFieldPattern = Pattern.compile("(^[^A-Za-z_]|[^A-Za-z0-9_])");
     private static final String sanitizeFieldReplacement = "_";
-//
-//    // JSONSchema field names used to convert the JSONSchema to Connect Schema.
-//    protected static final String typeField          = "type";
-//    protected static final String itemsField         = "items";
-//    protected static final String propertiesField    = "properties";
-//    protected static final String requiredField      = "required";
-//    protected static final String titleField         = "title";
-//    protected static final String descriptionField   = "description";
-//    protected static final String defaultField       = "default";
 
+    // JSONSchema field names used to convert the JSONSchema Flink DataTypes
+    // (Copied from Flinks' JsonRowSchemaConverter
     // see https://spacetelescope.github.io/understanding-json-schema/UnderstandingJSONSchema.pdf
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
@@ -86,12 +68,19 @@ public class JsonSchemaConverter {
         String title = jsonSchema.get(TITLE).textValue();
         String sanitizedTitle = shouldSanitizeFieldNames ? sanitizeFieldName(title) : title;
 
-        DataType rowDataType = toDataType(jsonSchema, title);
+        DataType rowDataType = toDataType(jsonSchema, sanitizedTitle);
 
         Schema.Builder builder = Schema.newBuilder();
         return builder.fromRowDataType(rowDataType);
     }
 
+    /**
+     * A DataTypes.Field is just a special DataType with a name and an optional description.
+     * Useful for named DataType fields within a Row DataType.
+     * @param jsonField
+     * @param fieldName
+     * @return
+     */
     public DataTypes.Field toFieldDataType(ObjectNode jsonField, String fieldName) {
         String sanitizedFieldName = shouldSanitizeFieldNames ? sanitizeFieldName(fieldName) : fieldName;
         DataType dataType = toDataType(jsonField, sanitizedFieldName);
@@ -113,6 +102,13 @@ public class JsonSchemaConverter {
         return fieldDataType;
     }
 
+    /**
+     * Converts this JSONSchema property to a Flink DataType.
+     *
+     * @param jsonField
+     * @param fieldName
+     * @return
+     */
     public DataType toDataType(ObjectNode jsonField, String fieldName) {
         if (jsonField.isNull())
             return null;
@@ -202,20 +198,6 @@ public class JsonSchemaConverter {
                     "Unknown schema type " + schemaTypeNode.textValue() + "in field " + fieldName
                 );
         }
-
-//        DataTypes.Field fieldDataType;
-//        if (jsonSchema.hasNonNull(DESCRIPTION)) {
-//            fieldDataType =  DataTypes.FIELD(
-//                sanitizedFieldName,
-//                dataType,
-//                jsonSchema.get(DESCRIPTION).textValue()
-//            );
-//        } else {
-//            fieldDataType = DataTypes.FIELD(
-//                sanitizedFieldName,
-//                dataType
-//            );
-//        }
 
         return dataType;
     }
