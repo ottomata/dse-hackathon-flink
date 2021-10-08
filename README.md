@@ -31,7 +31,7 @@ val pageLinksChangeStreamTable = eventStream.flinkRegisterKafkaTable(tableEnv)
 val result = tableEnv.sqlQuery(
    """
      |SELECT TUMBLE_START(kafka_timestamp, INTERVAL '1' MINUTE), database, COUNT(DISTINCT database)
-     |FROM page_links_change_stream
+     |FROM mediawiki_page_links_change
      |GROUP BY TUMBLE(kafka_timestamp, INTERVAL '1' MINUTE), database
      |""".stripMargin
 )
