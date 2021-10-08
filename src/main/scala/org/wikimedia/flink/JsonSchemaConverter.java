@@ -26,7 +26,7 @@ public class JsonSchemaConverter {
     private static final String sanitizeFieldReplacement = "_";
 
     // JSONSchema field names used to convert the JSONSchema Flink DataTypes
-    // (Copied from Flinks' JsonRowSchemaConverter
+    // (Copied from Flink's JsonRowSchemaConverter
     // see https://spacetelescope.github.io/understanding-json-schema/UnderstandingJSONSchema.pdf
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
