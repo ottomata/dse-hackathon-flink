@@ -1,3 +1,16 @@
+# Download Wikimedia Event Utilities jar, e.g.
+# https://archiva.wikimedia.org/#artifact-details-download-content/org.wikimedia/eventutilities-flink/1.2.0
+# wget http://archiva.wikimedia.org/repository/releases/org/wikimedia/eventutilities-flink/1.2.0/eventutilities-flink-1.2.0-jar-with-dependencies.jar
+
+# pyflink-shell.sh
+
+
+# Add the eventutilities jar to the classpath.
+# This will you to import the Java classes there and run them from Python.
+st_env.get_config().set("pipeline.jars", "file:///path/to/eventutilities-flink-1.2.0-jar-with-dependencies.jar")
+
+
+
 from pyflink.table import Schema, TableDescriptor
 from pyflink.java_gateway import get_gateway
 
@@ -58,7 +71,8 @@ def eventstream_flink_table(table_env, stream_name, connector_options = {}, tabl
     table_env.register_table(table_name, table)
     return table
  
-# example:
+# Example Usage:
+
 #table = eventstream_flink_table(st_env, "mediawiki.revision-create")
 
 #result = st_env.sql_query(
